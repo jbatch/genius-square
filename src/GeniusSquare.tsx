@@ -6,11 +6,19 @@ import PieceToolbar from "./PieceToolbar";
 import DiceDisplay from "./DiceDisplay";
 import { CellContent, GamePiece, PieceShape, GridCoordinate } from "./types";
 import { gamePieces } from "./game-pieces";
-import { rollDice } from "./dice-utils";
+import { checkWinCondition, getRemainingSpaces } from "./win-checker";
+import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
+import { PartyPopper } from "lucide-react";
+import {
+  generateDailyCoordinates,
+  getPuzzleNumber,
+} from "./daily-puzzle-utils";
+import GameOverDialog from "./GameOverDialog";
 
 const BOARD_SIZE = 6;
 
 const GeniusSquare = () => {
+  const puzzleNumber = getPuzzleNumber();
   const [board, setBoard] = useState<CellContent[][]>([]);
   const [selectedPiece, setSelectedPiece] = useState<GamePiece | null>(null);
   const [currentRotation, setCurrentRotation] = useState(0);
@@ -19,13 +27,17 @@ const GeniusSquare = () => {
   );
   const [diceResults, setDiceResults] = useState<GridCoordinate[]>([]);
   const [placedPieces, setPlacedPieces] = useState<Set<string>>(new Set());
+  const [hasWon, setHasWon] = useState(false);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [endTime, setEndTime] = useState<number | null>(null);
+  const [showGameOver, setShowGameOver] = useState(false);
 
   // Initialize board with dice rolls
   useEffect(() => {
-    const newDiceResults = rollDice();
+    setStartTime(Date.now());
+    const newDiceResults = generateDailyCoordinates();
     setDiceResults(newDiceResults);
 
-    // Create a fresh board and block the rolled coordinates
     const newBoard = Array(BOARD_SIZE)
       .fill(null)
       .map(() =>
@@ -37,6 +49,10 @@ const GeniusSquare = () => {
       newBoard[coord.row][coord.col].isBlocked = true;
     });
     setBoard(newBoard);
+    setHasWon(false);
+    setStartTime(Date.now());
+    setEndTime(null);
+    setShowGameOver(false);
   }, []);
 
   const getActiveShape = (): PieceShape | null => {
@@ -95,6 +111,14 @@ const GeniusSquare = () => {
 
     setBoard(newBoard);
     setPlacedPieces(new Set([...placedPieces, piece.id]));
+
+    // Check for win condition
+    if (checkWinCondition(newBoard)) {
+      const now = Date.now();
+      setEndTime(now);
+      setHasWon(true);
+      setShowGameOver(true);
+    }
   };
 
   const removePiece = (pieceId: string) => {
@@ -107,6 +131,7 @@ const GeniusSquare = () => {
     const newPlacedPieces = new Set(placedPieces);
     newPlacedPieces.delete(pieceId);
     setPlacedPieces(newPlacedPieces);
+    setHasWon(false);
   };
 
   const handlePieceSelect = (piece: GamePiece) => {
@@ -165,7 +190,7 @@ const GeniusSquare = () => {
   };
 
   const handleReset = () => {
-    const newDiceResults = rollDice();
+    const newDiceResults = generateDailyCoordinates();
     setDiceResults(newDiceResults);
 
     const newBoard = Array(BOARD_SIZE)
@@ -184,35 +209,66 @@ const GeniusSquare = () => {
     setCurrentRotation(0);
     setPreviewPosition(null);
     setPlacedPieces(new Set());
+    setHasWon(false);
   };
 
   return (
     <Card className="p-6">
       <div className="flex flex-col items-center gap-6">
-        <h1 className="text-2xl font-bold">Genius Square</h1>
+        <div className="text-center">
+          <h1 className="text-2xl font-bold">Genius Square</h1>
+          <div className="text-sm text-gray-500 mt-1">
+            Daily Puzzle #{puzzleNumber}
+          </div>
+        </div>
+
+        {hasWon && (
+          <Alert className="bg-green-50 border-green-200">
+            <PartyPopper className="h-4 w-4 text-green-500" />
+            <AlertTitle className="text-green-800">Congratulations!</AlertTitle>
+            <AlertDescription className="text-green-700">
+              You've completed the puzzle! Try another round or challenge
+              yourself with a new game.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <DiceDisplay coordinates={diceResults} />
 
-        <GameBoard
-          board={board}
-          selectedPiece={selectedPiece}
-          activeShape={getActiveShape()}
-          previewPosition={previewPosition}
-          onCellHover={handleCellHover}
-          onCellClick={handleCellClick}
-        />
+        <div className="space-y-2">
+          <GameBoard
+            board={board}
+            selectedPiece={selectedPiece}
+            activeShape={getActiveShape()}
+            previewPosition={previewPosition}
+            onCellHover={handleCellHover}
+            onCellClick={handleCellClick}
+          />
+
+          {!hasWon && (
+            <div className="text-sm text-gray-500 text-center">
+              Remaining spaces: {getRemainingSpaces(board)}
+            </div>
+          )}
+        </div>
 
         <PieceToolbar
-          pieces={gamePieces}
+          pieces={gamePieces.filter((piece) => !placedPieces.has(piece.id))}
           selectedPiece={selectedPiece}
-          placedPieces={placedPieces}
           onPieceSelect={handlePieceSelect}
           onRotate={handleRotate}
         />
 
         <div className="flex gap-4">
-          <Button onClick={handleReset}>New Game</Button>
+          <Button onClick={handleReset}>Reset Puzzle</Button>
         </div>
+
+        <GameOverDialog
+          isOpen={showGameOver}
+          onClose={() => setShowGameOver(false)}
+          puzzleNumber={puzzleNumber}
+          timeMs={endTime && startTime ? endTime - startTime : 0}
+        />
       </div>
     </Card>
   );

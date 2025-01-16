@@ -6,7 +6,6 @@ import { GamePiece, colorVariants } from "./types";
 interface PieceSelectorProps {
   piece: GamePiece;
   isSelected: boolean;
-  isPlaced: boolean;
   onPieceClick: (piece: GamePiece) => void;
   onRotate?: (direction: "cw" | "ccw") => void;
 }
@@ -14,7 +13,6 @@ interface PieceSelectorProps {
 const PieceSelector: React.FC<PieceSelectorProps> = ({
   piece,
   isSelected,
-  isPlaced,
   onPieceClick,
   onRotate,
 }) => {
@@ -25,8 +23,8 @@ const PieceSelector: React.FC<PieceSelectorProps> = ({
     <div
       className={`relative p-2 transition-transform ${
         isSelected ? "scale-110" : ""
-      } ${isPlaced ? "opacity-50" : "hover:cursor-pointer"}`}
-      onClick={() => !isPlaced && onPieceClick(piece)}
+      } hover:cursor-pointer`}
+      onClick={() => onPieceClick(piece)}
     >
       <div
         className="grid gap-px bg-gray-300 p-1"
