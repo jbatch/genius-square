@@ -1,6 +1,6 @@
 import React from "react";
 import { CellContent, GamePiece, PieceShape, colorVariants } from "./types";
-import { findAnchorOffset } from "./piece-utils";
+import { findAnchorOffset } from "./game-pieces";
 
 interface GameBoardProps {
   board: CellContent[][];

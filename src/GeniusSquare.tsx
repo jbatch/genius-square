@@ -5,7 +5,7 @@ import GameBoard from "./GameBoard";
 import PieceToolbar from "./PieceToolbar";
 import DiceDisplay from "./DiceDisplay";
 import { CellContent, GamePiece, PieceShape, GridCoordinate } from "./types";
-import { gamePieces } from "./game-pieces";
+import { findAnchorOffset, gamePieces } from "./game-pieces";
 import { checkWinCondition, getRemainingSpaces } from "./win-checker";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { PartyPopper } from "lucide-react";
@@ -15,7 +15,6 @@ import {
 } from "./daily-puzzle-utils";
 import GameOverDialog from "./GameOverDialog";
 import { recordPuzzleCompletion } from "./puzzle-statistics-utils";
-import { findAnchorOffset } from "./piece-utils";
 
 const BOARD_SIZE = 6;
 
