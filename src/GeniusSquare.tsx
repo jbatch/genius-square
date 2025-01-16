@@ -15,6 +15,7 @@ import {
 } from "./daily-puzzle-utils";
 import GameOverDialog from "./GameOverDialog";
 import { recordPuzzleCompletion } from "./puzzle-statistics-utils";
+import { findAnchorOffset } from "./piece-utils";
 
 const BOARD_SIZE = 6;
 
@@ -68,13 +69,23 @@ const GeniusSquare = () => {
   ): boolean => {
     if (!shape) return false;
 
+    const anchor = findAnchorOffset(shape);
+
+    const adjustedStartRow = startRow - anchor.row;
+    const adjustedStartCol = startCol - anchor.col;
+
     for (let r = 0; r < shape.length; r++) {
       for (let c = 0; c < shape[r].length; c++) {
         if (shape[r][c] === 1) {
-          const boardRow = startRow + r;
-          const boardCol = startCol + c;
+          const boardRow = adjustedStartRow + r;
+          const boardCol = adjustedStartCol + c;
 
-          if (boardRow >= BOARD_SIZE || boardCol >= BOARD_SIZE) {
+          if (
+            boardRow < 0 ||
+            boardRow >= BOARD_SIZE ||
+            boardCol < 0 ||
+            boardCol >= BOARD_SIZE
+          ) {
             return false;
           }
 
@@ -98,10 +109,18 @@ const GeniusSquare = () => {
   ) => {
     const newBoard = board.map((row) => [...row]);
 
+    const anchor = findAnchorOffset(shape);
+
+    // Adjust the start position based on the anchor offset
+    const adjustedStartRow = startRow - anchor.row;
+    const adjustedStartCol = startCol - anchor.col;
+
     for (let r = 0; r < shape.length; r++) {
       for (let c = 0; c < shape[r].length; c++) {
         if (shape[r][c] === 1) {
-          newBoard[startRow + r][startCol + c] = {
+          const boardRow = adjustedStartRow + r;
+          const boardCol = adjustedStartCol + c;
+          newBoard[boardRow][boardCol] = {
             isBlocked: false,
             pieceId: piece.id,
             pieceColor: piece.color,

@@ -1,5 +1,6 @@
 import React from "react";
 import { CellContent, GamePiece, PieceShape, colorVariants } from "./types";
+import { findAnchorOffset } from "./piece-utils";
 
 interface GameBoardProps {
   board: CellContent[][];
@@ -21,8 +22,10 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const renderPreview = (rowIndex: number, colIndex: number): boolean => {
     if (!previewPosition || !activeShape || !selectedPiece) return false;
 
-    const relativeRow = rowIndex - previewPosition.row;
-    const relativeCol = colIndex - previewPosition.col;
+    const anchor = findAnchorOffset(activeShape);
+
+    const relativeRow = rowIndex - (previewPosition.row - anchor.row);
+    const relativeCol = colIndex - (previewPosition.col - anchor.col);
 
     return (
       relativeRow >= 0 &&

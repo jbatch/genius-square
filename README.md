@@ -1,6 +1,6 @@
 # Genius Square Game
 
-A web-based implementation of The Genius Square puzzle game where players fill a 6x6 grid with geometric pieces after blocking certain squares based on dice rolls.
+A web-based implementation of The Genius Square puzzle game where players fill a 6x6 grid with geometric pieces after blocking certain squares based on daily puzzle coordinates. Each day presents a unique puzzle challenge that players can solve and share their completion times.
 
 ## Core Game Mechanics
 
@@ -9,64 +9,72 @@ A web-based implementation of The Genius Square puzzle game where players fill a
 - 6x6 grid layout
 - Cells can be:
   - Empty
-  - Blocked (from dice rolls)
+  - Blocked (from daily puzzle coordinates)
   - Filled with a game piece
 
 ### Game Pieces
 
-- 9 different geometric shapes
-- Each piece has a unique color
-- Pieces can be:
-  - Selected
-  - Rotated (clockwise/counterclockwise)
+- 9 unique geometric shapes with distinct colors:
+  - Dot (orange)
+  - Dash (pink)
+  - Small I (purple)
+  - Corner (teal)
+  - L (blue)
+  - I (red)
+  - T (emerald)
+  - Z (yellow)
+  - O (lime)
+- Each piece can be:
+  - Selected from the toolbar
+  - Rotated clockwise/counterclockwise
   - Placed on the board
   - Removed by clicking
 - Each piece can only be placed once
 
-### Dice System
+### Daily Puzzles
 
-- 7 dice with grid coordinates (e.g., A1, B3)
-- Rolled at game start
-- Coordinates displayed above board
-- Corresponding grid cells are blocked
+- New puzzle available each day
+- Puzzle number tracks days since January 15, 2025
+- Seven coordinates randomly generated using daily seed
+- Share completion times with friends
+- Stats tracking for personal bests
 
 ## Technical Implementation
 
 ### Tech Stack
 
-- Vite
+- React
 - TypeScript
 - Tailwind CSS
 - shadcn/ui components
-
-### Utilities
-
-- `game-pieces.ts` - Piece definitions and rotation logic
-- `dice-utils.ts` - Dice rolling and coordinate conversion
-- `types.ts` - Shared type definitions
+- localStorage for stats persistence
 
 ## Current Features
 
-- [x] Basic game board
+- [x] Daily puzzle generation
 - [x] Piece selection and rotation
 - [x] Piece placement preview
 - [x] Valid placement checking
-- [x] Dice roll implementation
 - [x] One-time piece placement
 - [x] Piece removal
-- [x] New game reset
+- [x] Win condition checking
+- [x] Score tracking
+- [x] Puzzle completion sharing
+- [x] Personal best times
+- [x] Completion statistics
 
 ## Planned Features
 
-- [ ] Deterministic dice rolling based on daily seed
-- [ ] Win condition checking
-- [ ] Piece placement animations
-- [ ] Invalid placement feedback
-- [ ] Score tracking
 - [ ] Multiple difficulty levels
 - [ ] Solution hints
 - [ ] Undo/redo functionality
-- [ ] Save game state
+- [ ] Piece placement animations
+- [ ] Invalid placement feedback
+- [ ] Touch/mobile optimization
+- [ ] Accessibility improvements
+- [ ] Tutorial mode
+- [ ] Global leaderboards
+- [ ] Achievement system
 
 ## Setup and Development
 
@@ -74,3 +82,12 @@ A web-based implementation of The Genius Square puzzle game where players fill a
 2. Install dependencies: `yarn`
 3. Start dev server: `yarn dev`
 4. Build for production: `yarn build`
+
+## Local Storage
+
+The game uses localStorage to track:
+
+- Puzzle completion times
+- Personal best times
+- Number of attempts
+- Total unique puzzles completed
