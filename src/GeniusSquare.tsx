@@ -257,6 +257,7 @@ const GeniusSquare = () => {
           selectedPiece={selectedPiece}
           onPieceSelect={handlePieceSelect}
           onRotate={handleRotate}
+          currentRotation={currentRotation}
         />
 
         <div className="flex gap-4">

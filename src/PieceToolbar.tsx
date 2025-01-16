@@ -5,6 +5,7 @@ import { GamePiece } from "./types";
 interface PieceToolbarProps {
   pieces: GamePiece[];
   selectedPiece: GamePiece | null;
+  currentRotation: number;
   onPieceSelect: (piece: GamePiece) => void;
   onRotate: (direction: "cw" | "ccw") => void;
 }
@@ -12,6 +13,7 @@ interface PieceToolbarProps {
 const PieceToolbar: React.FC<PieceToolbarProps> = ({
   pieces,
   selectedPiece,
+  currentRotation,
   onPieceSelect,
   onRotate,
 }) => {
@@ -22,8 +24,9 @@ const PieceToolbar: React.FC<PieceToolbarProps> = ({
           key={piece.id}
           piece={piece}
           isSelected={selectedPiece?.id === piece.id}
+          currentRotation={selectedPiece?.id === piece.id ? currentRotation : 0}
           onPieceClick={onPieceSelect}
-          onRotate={onRotate}
+          onRotate={selectedPiece?.id === piece.id ? onRotate : undefined}
         />
       ))}
     </div>

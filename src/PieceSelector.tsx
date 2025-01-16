@@ -6,6 +6,7 @@ import { GamePiece, colorVariants } from "./types";
 interface PieceSelectorProps {
   piece: GamePiece;
   isSelected: boolean;
+  currentRotation?: number;
   onPieceClick: (piece: GamePiece) => void;
   onRotate?: (direction: "cw" | "ccw") => void;
 }
@@ -13,10 +14,12 @@ interface PieceSelectorProps {
 const PieceSelector: React.FC<PieceSelectorProps> = ({
   piece,
   isSelected,
+  currentRotation = 0,
   onPieceClick,
   onRotate,
 }) => {
-  const shape = piece.shape;
+  // Get the currently rotated shape
+  const shape = piece.rotations[currentRotation] || piece.shape;
   const maxWidth = Math.max(...shape.map((row) => row.length));
 
   return (
