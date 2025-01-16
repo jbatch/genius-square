@@ -14,6 +14,7 @@ import {
   getPuzzleNumber,
 } from "./daily-puzzle-utils";
 import GameOverDialog from "./GameOverDialog";
+import { recordPuzzleCompletion } from "./puzzle-statistics-utils";
 
 const BOARD_SIZE = 6;
 
@@ -118,6 +119,8 @@ const GeniusSquare = () => {
       setEndTime(now);
       setHasWon(true);
       setShowGameOver(true);
+      const timeMs = now - (startTime || now);
+      recordPuzzleCompletion(puzzleNumber, timeMs);
     }
   };
 
